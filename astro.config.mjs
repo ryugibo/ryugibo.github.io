@@ -8,6 +8,12 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   site: 'https://ryugibo.github.io',
   integrations: [mdx(), sitemap()],
+  markdown: {
+    shikiConfig: {
+      theme: 'github-dark-default',
+      wrap: false,
+    },
+  },
   vite: {
     plugins: [tailwindcss()],
   },

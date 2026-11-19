@@ -5,11 +5,13 @@ import { GITHUB_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 interface Props {
   title?: string;
   description?: string;
+  wide?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION } = Astro.props;
+const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const pathname = Astro.url.pathname;
+const containerWidth = wide ? 'max-w-5xl' : 'max-w-4xl';
 
 const navLinks = [
   { href: '/posts', label: 'Posts' },
@@ -37,16 +39,23 @@ const navLinks = [
       (() => {
         const stored = localStorage.getItem('theme');
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const theme = stored || (prefersDark ? 'dark' : 'light');
+        const theme =
+          stored === 'ue-dark' || stored === 'ue-light'
+            ? stored
+            : prefersDark
+              ? 'ue-dark'
+              : 'ue-light';
         document.documentElement.setAttribute('data-theme', theme);
       })();
     </script>
   </head>
-  <body class="min-h-screen flex flex-col bg-base-100 text-base-content">
-    <header class="border-b border-base-300 bg-base-100/80 backdrop-blur sticky top-0 z-30">
-      <div class="navbar container mx-auto max-w-3xl px-4">
+  <body class="min-h-screen flex flex-col bg-base-100 text-base-content antialiased">
+    <header class="border-b border-base-300/80 bg-base-100/85 backdrop-blur-md sticky top-0 z-30">
+      <div class:list={['navbar container mx-auto px-4 sm:px-6', containerWidth]}>
         <div class="flex-1">
-          <a href="/" class="btn btn-ghost text-lg font-bold px-2">{SITE_TITLE}</a>
+          <a href="/" class="btn btn-ghost text-lg font-extrabold tracking-tight px-2">
+            {SITE_TITLE}
+          </a>
         </div>
         <nav class="flex items-center gap-1" aria-label="주 메뉴">
           {
@@ -55,7 +64,7 @@ const navLinks = [
               return (
                 <a
                   href={href}
-                  class:list={['btn btn-ghost btn-sm', isActive && 'btn-active']}
+                  class:list={['btn btn-ghost btn-sm font-medium', isActive && 'btn-active text-primary']}
                 >
                   {label}
                 </a>
@@ -99,13 +108,16 @@ const navLinks = [
       </div>
     </header>
 
-    <main class="flex-1 container mx-auto max-w-3xl px-4 py-10">
+    <main class:list={['flex-1 container mx-auto px-4 sm:px-6 py-10 sm:py-14', containerWidth]}>
       <slot />
     </main>
 
-    <footer class="border-t border-base-300 mt-12">
+    <footer class="border-t border-base-300/80 mt-16">
       <div
-        class="footer sm:footer-horizontal items-center container mx-auto max-w-3xl px-4 py-6 text-sm text-base-content/70"
+        class:list={[
+          'footer sm:footer-horizontal items-center container mx-auto px-4 sm:px-6 py-6 text-sm text-base-content/65',
+          containerWidth,
+        ]}
       >
         <aside>
           <p>© {new Date().getFullYear()} {SITE_TITLE}. Built with Astro & daisyUI.</p>
@@ -124,18 +136,26 @@ const navLinks = [
         const btn = document.getElementById('theme-toggle');
         const sun = document.getElementById('icon-sun');
         const moon = document.getElementById('icon-moon');
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 
         function syncIcons() {
-          const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+          const isDark = document.documentElement.getAttribute('data-theme') === 'ue-dark';
           sun?.classList.toggle('hidden', !isDark);
           moon?.classList.toggle('hidden', isDark);
         }
 
         syncIcons();
 
+        mediaQuery.addEventListener('change', (e) => {
+          if (!localStorage.getItem('theme')) {
+            document.documentElement.setAttribute('data-theme', e.matches ? 'ue-dark' : 'ue-light');
+            syncIcons();
+          }
+        });
+
         btn?.addEventListener('click', () => {
           const current = document.documentElement.getAttribute('data-theme');
-          const next = current === 'dark' ? 'light' : 'dark';
+          const next = current === 'ue-dark' ? 'ue-light' : 'ue-dark';
           document.documentElement.setAttribute('data-theme', next);
           localStorage.setItem('theme', next);
           syncIcons();

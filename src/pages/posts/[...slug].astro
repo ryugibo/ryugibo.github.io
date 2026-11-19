@@ -1,7 +1,8 @@
 ---
 import { render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getPublishedPosts, type Post } from '../../utils/posts';
+import TableOfContents from '../../components/TableOfContents.astro';
+import { formatDate, getPublishedPosts, getReadingTime, type Post } from '../../utils/posts';
 
 export async function getStaticPaths() {
   const posts = await getPublishedPosts();
@@ -16,44 +17,124 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await render(post);
-const { title, description, pubDate, updatedDate, tags } = post.data;
+const { Content, headings } = await render(post);
+const { title, description, pubDate, updatedDate, category, tags, heroImage, heroAlt } = post.data;
+const readingTime = getReadingTime(post.body);
+const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={title} description={description}>
+<BaseLayout title={title} description={description} wide={hasToc}>
   <article>
-    <header class="mb-8 pb-6 border-b border-base-300">
-      <div class="flex flex-wrap items-center gap-2 text-sm text-base-content/60 mb-3">
-        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+    <header class="max-w-3xl mx-auto lg:mx-0 mb-10 pb-8 border-b border-base-300">
+      <div class="flex flex-wrap items-center gap-2 mb-4">
         {
-          updatedDate && (
-            <span>· 수정됨: {formatDate(updatedDate)}</span>
+          category && (
+            <span class="badge badge-primary badge-soft font-semibold uppercase tracking-wider text-xs">
+              {category}
+            </span>
           )
         }
+        {
+          tags.map((tag) => (
+            <a
+              href={`/tags/${encodeURIComponent(tag)}`}
+              class="badge badge-outline badge-sm hover:badge-primary transition-colors"
+            >
+              #{tag}
+            </a>
+          ))
+        }
       </div>
-      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">{title}</h1>
-      {
-        tags.length > 0 && (
-          <div class="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <a
-                href={`/tags/${encodeURIComponent(tag)}`}
-                class="badge badge-outline hover:badge-primary"
-              >
-                #{tag}
-              </a>
-            ))}
-          </div>
-        )
-      }
+
+      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+        {title}
+      </h1>
+
+      <p class="text-lg sm:text-xl text-base-content/75 leading-relaxed mb-6">
+        {description}
+      </p>
+
+      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/60">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
+        <span>·</span>
+        <span>약 {readingTime}분 읽기</span>
+      </div>
     </header>
 
-    <div class="prose max-w-none prose-headings:scroll-mt-20">
-      <Content />
+    {
+      heroImage && (
+        <figure class="mb-12">
+          <img
+            src={heroImage}
+            alt={heroAlt ?? title}
+            class="w-full max-h-[480px] object-cover rounded-xl border border-base-300 shadow-lg"
+            loading="eager"
+          />
+          {heroAlt && (
+            <figcaption class="text-center text-sm text-base-content/60 mt-3">{heroAlt}</figcaption>
+          )}
+        </figure>
+      )
+    }
+
+    <div
+      class:list={[
+        hasToc
+          ? 'lg:grid lg:grid-cols-[minmax(0,740px)_220px] lg:gap-12 items-start'
+          : 'max-w-[740px] mx-auto',
+      ]}
+    >
+      <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
+        <Content />
+      </div>
+
+      {hasToc && <TableOfContents headings={headings} />}
     </div>
 
-    <footer class="mt-12 pt-6 border-t border-base-300">
+    <footer class="max-w-[740px] mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
       <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
+      <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
     </footer>
   </article>
 </BaseLayout>
+
+<script is:inline>
+  (() => {
+    const codeBlocks = document.querySelectorAll('.ue-prose pre');
+    codeBlocks.forEach((pre) => {
+      if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.textContent = '복사';
+      btn.setAttribute('aria-label', '코드 복사');
+
+      btn.addEventListener('click', async () => {
+        const text = pre.innerText;
+        try {
+          await navigator.clipboard.writeText(text);
+          btn.textContent = '복사됨 ✓';
+          btn.setAttribute('data-copied', 'true');
+          setTimeout(() => {
+            btn.textContent = '복사';
+            btn.removeAttribute('data-copied');
+          }, 1800);
+        } catch {
+          btn.textContent = '실패';
+          setTimeout(() => {
+            btn.textContent = '복사';
+          }, 1800);
+        }
+      });
+
+      wrapper.appendChild(btn);
+    });
+  })();
+</script>
