@@ -23,9 +23,9 @@ const readingTime = getReadingTime(post.body);
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={title} description={description} wide={hasToc}>
+<BaseLayout title={title} description={description} fullWidth={true}>
   <article>
-    <header class="max-w-3xl mx-auto lg:mx-0 mb-10 pb-8 border-b border-base-300">
+    <header class="max-w-[740px] mx-auto mb-10 pb-8 border-b border-base-300">
       <div class="flex flex-wrap items-center gap-2 mb-4">
         {
           category && (
@@ -64,7 +64,7 @@ const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 
     {
       heroImage && (
-        <figure class="mb-12">
+        <figure class="max-w-4xl mx-auto mb-12">
           <img
             src={heroImage}
             alt={heroAlt ?? title}
@@ -78,24 +78,24 @@ const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
       )
     }
 
-    <div
-      class:list={[
-        hasToc
-          ? 'lg:grid lg:grid-cols-[minmax(0,740px)_220px] lg:gap-12'
-          : 'max-w-[740px] mx-auto',
-      ]}
-    >
-      <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
-        <Content />
+    <div class="xl:grid xl:grid-cols-[1fr_minmax(0,740px)_1fr] xl:gap-10 max-w-[1440px] mx-auto">
+      <div class="hidden xl:block" aria-hidden="true"></div>
+
+      <div class="max-w-[740px] w-full mx-auto">
+        {hasToc && <TableOfContents headings={headings} variant="inline" />}
+
+        <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
+          <Content />
+        </div>
+
+        <footer class="mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
+          <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
+          <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
+        </footer>
       </div>
 
-      {hasToc && <TableOfContents headings={headings} />}
+      {hasToc ? <TableOfContents headings={headings} variant="rail" /> : <div class="hidden xl:block" aria-hidden="true" />}
     </div>
-
-    <footer class="max-w-[740px] mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
-      <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
-      <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
-    </footer>
   </article>
 </BaseLayout>
 

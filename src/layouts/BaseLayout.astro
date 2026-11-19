@@ -5,13 +5,12 @@ import { GITHUB_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 interface Props {
   title?: string;
   description?: string;
-  wide?: boolean;
+  fullWidth?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION, wide = false } = Astro.props;
+const { title, description = SITE_DESCRIPTION, fullWidth = false } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const pathname = Astro.url.pathname;
-const containerWidth = wide ? 'max-w-5xl' : 'max-w-4xl';
 
 const navLinks = [
   { href: '/posts', label: 'Posts' },
@@ -51,7 +50,7 @@ const navLinks = [
   </head>
   <body class="min-h-screen flex flex-col bg-base-100 text-base-content antialiased">
     <header class="border-b border-base-300/80 bg-base-100/85 backdrop-blur-md sticky top-0 z-30">
-      <div class:list={['navbar container mx-auto px-4 sm:px-6', containerWidth]}>
+      <div class="navbar container mx-auto max-w-4xl px-4 sm:px-6">
         <div class="flex-1">
           <a href="/" class="btn btn-ghost text-lg font-extrabold tracking-tight px-2">
             {SITE_TITLE}
@@ -108,16 +107,18 @@ const navLinks = [
       </div>
     </header>
 
-    <main class:list={['flex-1 container mx-auto px-4 sm:px-6 py-10 sm:py-14', containerWidth]}>
+    <main
+      class:list={[
+        'flex-1 px-4 sm:px-6 py-10 sm:py-14',
+        fullWidth ? 'w-full' : 'container mx-auto max-w-4xl',
+      ]}
+    >
       <slot />
     </main>
 
     <footer class="border-t border-base-300/80 mt-16">
       <div
-        class:list={[
-          'footer sm:footer-horizontal items-center container mx-auto px-4 sm:px-6 py-6 text-sm text-base-content/65',
-          containerWidth,
-        ]}
+        class="footer sm:footer-horizontal items-center container mx-auto max-w-4xl px-4 sm:px-6 py-6 text-sm text-base-content/65"
       >
         <aside>
           <p>© {new Date().getFullYear()} {SITE_TITLE}. Built with Astro & daisyUI.</p>
