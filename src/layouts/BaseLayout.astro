@@ -1,6 +1,6 @@
 ---
-import '../styles/global.css';
-import { GITHUB_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import "../styles/global.css";
+import { GITHUB_URL, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
 
 interface Props {
   title?: string;
@@ -9,19 +9,14 @@ interface Props {
   flushTop?: boolean;
 }
 
-const {
-  title,
-  description = SITE_DESCRIPTION,
-  fullWidth = false,
-  flushTop = false,
-} = Astro.props;
+const { title, description = SITE_DESCRIPTION, fullWidth = false, flushTop = false } = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const pathname = Astro.url.pathname;
 
 const navLinks = [
-  { href: '/posts', label: 'Posts' },
-  { href: '/tags', label: 'Tags' },
-  { href: '/about', label: 'About' },
+  { href: "/posts", label: "Posts" },
+  { href: "/tags", label: "Tags" },
+  { href: "/about", label: "About" },
 ];
 ---
 

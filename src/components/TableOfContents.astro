@@ -1,12 +1,12 @@
 ---
-import type { MarkdownHeading } from 'astro';
+import type { MarkdownHeading } from "astro";
 
 interface Props {
   headings: MarkdownHeading[];
-  variant?: 'rail' | 'inline';
+  variant?: "rail" | "inline";
 }
 
-const { headings, variant = 'rail' } = Astro.props;
+const { headings, variant = "rail" } = Astro.props;
 const tocHeadings = headings.filter((h) => h.depth === 2 || h.depth === 3);
 ---
 

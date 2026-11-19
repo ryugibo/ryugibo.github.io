@@ -1,6 +1,6 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDate, getPublishedPosts, type Post } from '../../utils/posts';
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, getPublishedPosts, type Post } from "../../utils/posts";
 
 const posts = await getPublishedPosts();
 const tagMap = new Map<string, Post[]>();
@@ -14,7 +14,7 @@ for (const post of posts) {
 }
 
 const sortedTags = [...tagMap.entries()].sort(
-  (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0])
+  (a, b) => b[1].length - a[1].length || a[0].localeCompare(b[0]),
 );
 ---
 
