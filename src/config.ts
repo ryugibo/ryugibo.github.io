@@ -91,11 +91,11 @@ export const expressiveCodeConfig: ExpressiveCodeConfig = {
 };
 
 export const giscusConfig: GiscusConfig = {
-	enable: false, // Set to true after enabling GitHub Discussions on a public repo and filling repoId/categoryId from https://giscus.app
+	enable: true,
 	repo: "ryugibo/ryugibo.github.io",
-	repoId: "",
+	repoId: "R_kgDOVz0Bbw",
 	category: "Announcements",
-	categoryId: "",
+	categoryId: "DIC_kwDOVz0Bb84DLd7y",
 	mapping: "pathname",
 	reactionsEnabled: true,
 	emitMetadata: false,
