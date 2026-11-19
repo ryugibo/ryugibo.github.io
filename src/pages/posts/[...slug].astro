@@ -1,181 +1,136 @@
 ---
-import { render } from "astro:content";
-import TableOfContents from "../../components/TableOfContents.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDate, getPublishedPosts, getReadingTime, type Post } from "../../utils/posts";
+import path from "node:path";
+import License from "@components/misc/License.astro";
+import Markdown from "@components/misc/Markdown.astro";
+import I18nKey from "@i18n/i18nKey";
+import { i18n } from "@i18n/translation";
+import MainGridLayout from "@layouts/MainGridLayout.astro";
+import { getSortedPosts } from "@utils/content-utils";
+import { getDir, getPostUrlBySlug } from "@utils/url-utils";
+import { Icon } from "astro-icon/components";
+import { licenseConfig } from "src/config";
+import ImageWrapper from "../../components/misc/ImageWrapper.astro";
+import PostMetadata from "../../components/PostMeta.astro";
+import { profileConfig, siteConfig } from "../../config";
+import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
 export async function getStaticPaths() {
-  const posts = await getPublishedPosts();
-  return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { post },
-  }));
+	const blogEntries = await getSortedPosts();
+	return blogEntries.map((entry) => ({
+		params: { slug: entry.slug },
+		props: { entry },
+	}));
 }
 
-interface Props {
-  post: Post;
-}
+const { entry } = Astro.props;
+const { Content, headings } = await entry.render();
 
-const { post } = Astro.props;
-const { Content, headings } = await render(post);
-const { title, description, pubDate, updatedDate, category, tags, heroImage, heroAlt } = post.data;
-const readingTime = getReadingTime(post.body);
-const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
+const { remarkPluginFrontmatter } = await entry.render();
+
+const jsonLd = {
+	"@context": "https://schema.org",
+	"@type": "BlogPosting",
+	headline: entry.data.title,
+	description: entry.data.description || entry.data.title,
+	keywords: entry.data.tags,
+	author: {
+		"@type": "Person",
+		name: profileConfig.name,
+		url: Astro.site,
+	},
+	datePublished: formatDateToYYYYMMDD(entry.data.published),
+	inLanguage: entry.data.lang
+		? entry.data.lang.replace("_", "-")
+		: siteConfig.lang.replace("_", "-"),
+	// TODO include cover image here
+};
 ---
-
-<BaseLayout title={title} description={description} fullWidth={true} flushTop={Boolean(heroImage)}>
-  <article>
-    {
-      heroImage ? (
-        <header class="relative w-full overflow-hidden border-b border-base-300 mb-12 sm:mb-16 min-h-[360px] sm:min-h-[440px] flex items-end">
-          <img
-            src={heroImage}
-            alt={heroAlt ?? title}
-            class="absolute inset-0 w-full h-full object-cover select-none"
-            loading="eager"
-          />
-          <div
-            class="absolute inset-0 bg-gradient-to-t from-[#101014] via-[#101014]/70 to-[#101014]/35"
-            aria-hidden="true"
-          />
-          <div class="relative z-10 w-full px-4 sm:px-6 pt-24 pb-10 sm:pt-32 sm:pb-14">
-            <div class="max-w-[740px] mx-auto text-[#f3f5fa]">
-              <div class="flex flex-wrap items-center gap-2 mb-4">
-                {category && (
-                  <span class="badge bg-[#26bbff]/20 text-[#26bbff] border-[#26bbff]/40 font-semibold uppercase tracking-wider text-xs">
-                    {category}
-                  </span>
-                )}
-                {tags.map((tag) => (
-                  <a
-                    href={`/tags/${encodeURIComponent(tag)}`}
-                    class="badge badge-sm bg-white/10 text-white/85 border-white/20 hover:bg-[#26bbff] hover:text-[#06141d] hover:border-[#26bbff] transition-colors"
-                  >
-                    #{tag}
-                  </a>
-                ))}
-              </div>
-
-              <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 drop-shadow-sm">
-                {title}
-              </h1>
-
-              <p class="text-base sm:text-xl text-white/80 leading-relaxed mb-6">
-                {description}
-              </p>
-
-              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/65">
-                <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-                {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
-                <span>·</span>
-                <span>약 {readingTime}분 읽기</span>
-              </div>
-            </div>
-          </div>
-        </header>
-      ) : (
-        <div class="px-4 sm:px-6">
-          <header class="max-w-[740px] mx-auto mb-10 pb-8 border-b border-base-300">
-            <div class="flex flex-wrap items-center gap-2 mb-4">
-              {category && (
-                <span class="badge badge-primary badge-soft font-semibold uppercase tracking-wider text-xs">
-                  {category}
-                </span>
-              )}
-              {tags.map((tag) => (
-                <a
-                  href={`/tags/${encodeURIComponent(tag)}`}
-                  class="badge badge-outline badge-sm hover:badge-primary transition-colors"
-                >
-                  #{tag}
-                </a>
-              ))}
+<MainGridLayout banner={entry.data.image} title={entry.data.title} description={entry.data.description} lang={entry.data.lang} setOGTypeArticle={true} headings={headings}>
+    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative mb-4">
+        <div id="post-container" class:list={["card-base z-10 px-6 md:px-9 pt-6 pb-4 relative w-full ",
+            {}
+        ]}>
+            <!-- word count and reading time -->
+            <div class="flex flex-row text-black/30 dark:text-white/30 gap-5 mb-3 transition onload-animation">
+                <div class="flex flex-row items-center">
+                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                        <Icon name="material-symbols:notes-rounded"></Icon>
+                    </div>
+                    <div class="text-sm">{remarkPluginFrontmatter.words} {" " + i18n(I18nKey.wordsCount)}</div>
+                </div>
+                <div class="flex flex-row items-center">
+                    <div class="transition h-6 w-6 rounded-md bg-black/5 dark:bg-white/10 text-black/50 dark:text-white/50 flex items-center justify-center mr-2">
+                        <Icon name="material-symbols:schedule-outline-rounded"></Icon>
+                    </div>
+                    <div class="text-sm">
+                        {remarkPluginFrontmatter.minutes} {" " + i18n(remarkPluginFrontmatter.minutes === 1 ? I18nKey.minuteCount : I18nKey.minutesCount)}
+                    </div>
+                </div>
             </div>
 
-            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-              {title}
-            </h1>
-
-            <p class="text-lg sm:text-xl text-base-content/75 leading-relaxed mb-6">
-              {description}
-            </p>
-
-            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/60">
-              <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-              {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
-              <span>·</span>
-              <span>약 {readingTime}분 읽기</span>
+            <!-- title -->
+            <div class="relative onload-animation">
+                <div
+                    data-pagefind-body data-pagefind-weight="10" data-pagefind-meta="title"
+                    class="transition w-full block font-bold mb-3
+                    text-3xl md:text-[2.25rem]/[2.75rem]
+                    text-black/90 dark:text-white/90
+                    md:before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
+                    before:absolute before:top-[0.75rem] before:left-[-1.125rem]
+                ">
+                    {entry.data.title}
+                </div>
             </div>
-          </header>
+
+            <!-- metadata -->
+            <div class="onload-animation">
+                <PostMetadata
+                        class="mb-5"
+                        published={entry.data.published}
+                        updated={entry.data.updated}
+                        tags={entry.data.tags}
+                        category={entry.data.category}
+                ></PostMetadata>
+                {!entry.data.image && <div class="border-[var(--line-divider)] border-dashed border-b-[1px] mb-5"></div>}
+            </div>
+
+            <!-- always show cover as long as it has one -->
+
+            {entry.data.image &&
+                <ImageWrapper id="post-cover" src={entry.data.image} basePath={path.join("content/posts/", getDir(entry.id))} class="mb-8 rounded-xl banner-container onload-animation"/>
+            }
+
+
+            <Markdown class="mb-6 markdown-content onload-animation">
+                <Content />
+            </Markdown>
+
+            {licenseConfig.enable && <License title={entry.data.title} slug={entry.slug} pubDate={entry.data.published} class="mb-6 rounded-xl license-container onload-animation"></License>}
+
         </div>
-      )
-    }
-
-    <div class="px-4 sm:px-6">
-      <div class="xl:grid xl:grid-cols-[1fr_minmax(0,740px)_1fr] xl:gap-10 max-w-[1440px] mx-auto">
-        <div class="hidden xl:block" aria-hidden="true"></div>
-
-        <div class="max-w-[740px] w-full mx-auto">
-          {hasToc && <TableOfContents headings={headings} variant="inline" />}
-
-          <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
-            <Content />
-          </div>
-
-          <footer class="mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
-            <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
-            <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
-          </footer>
-        </div>
-
-        {
-          hasToc ? (
-            <TableOfContents headings={headings} variant="rail" />
-          ) : (
-            <div class="hidden xl:block" aria-hidden="true" />
-          )
-        }
-      </div>
     </div>
-  </article>
-</BaseLayout>
 
-<script is:inline>
-  (() => {
-    const codeBlocks = document.querySelectorAll('.ue-prose pre');
-    codeBlocks.forEach((pre) => {
-      if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+    <div class="flex flex-col md:flex-row justify-between mb-4 gap-4 overflow-hidden w-full">
+        <a href={entry.data.nextSlug ? getPostUrlBySlug(entry.data.nextSlug) : "#"}
+           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.nextSlug}]}>
+            {entry.data.nextSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-start gap-4" >
+                <Icon name="material-symbols:chevron-left-rounded" class="text-[2rem] text-[var(--primary)]" />
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+                    {entry.data.nextTitle}
+                </div>
+            </div>}
+        </a>
 
-      const wrapper = document.createElement('div');
-      wrapper.className = 'code-block-wrapper';
-      pre.parentNode?.insertBefore(wrapper, pre);
-      wrapper.appendChild(pre);
+        <a href={entry.data.prevSlug ? getPostUrlBySlug(entry.data.prevSlug) : "#"}
+           class:list={["w-full font-bold overflow-hidden active:scale-95", {"pointer-events-none": !entry.data.prevSlug}]}>
+            {entry.data.prevSlug && <div class="btn-card rounded-2xl w-full h-[3.75rem] max-w-full px-4 flex items-center !justify-end gap-4">
+                <div class="overflow-hidden transition overflow-ellipsis whitespace-nowrap max-w-[calc(100%_-_3rem)] text-black/75 dark:text-white/75">
+                    {entry.data.prevTitle}
+                </div>
+                <Icon name="material-symbols:chevron-right-rounded" class="text-[2rem] text-[var(--primary)]" />
+            </div>}
+        </a>
+    </div>
 
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'code-copy-btn';
-      btn.textContent = '복사';
-      btn.setAttribute('aria-label', '코드 복사');
-
-      btn.addEventListener('click', async () => {
-        const text = pre.innerText;
-        try {
-          await navigator.clipboard.writeText(text);
-          btn.textContent = '복사됨 ✓';
-          btn.setAttribute('data-copied', 'true');
-          setTimeout(() => {
-            btn.textContent = '복사';
-            btn.removeAttribute('data-copied');
-          }, 1800);
-        } catch {
-          btn.textContent = '실패';
-          setTimeout(() => {
-            btn.textContent = '복사';
-          }, 1800);
-        }
-      });
-
-      wrapper.appendChild(btn);
-    });
-  })();
-</script>
+</MainGridLayout>

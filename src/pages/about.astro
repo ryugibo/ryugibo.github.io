@@ -1,28 +1,25 @@
 ---
-import { GITHUB_URL, SITE_TITLE } from "../consts";
-import BaseLayout from "../layouts/BaseLayout.astro";
+
+import { getEntry, render } from "astro:content";
+import Markdown from "@components/misc/Markdown.astro";
+import I18nKey from "../i18n/i18nKey";
+import { i18n } from "../i18n/translation";
+import MainGridLayout from "../layouts/MainGridLayout.astro";
+
+const aboutPost = await getEntry("spec", "about");
+
+if (!aboutPost) {
+	throw new Error("About page content not found");
+}
+
+const { Content } = await render(aboutPost);
 ---
-
-<BaseLayout title="About" description={`${SITE_TITLE} 소개`}>
-  <article class="prose ue-prose max-w-none">
-    <h1>About</h1>
-    <p>
-      안녕하세요, <strong>{SITE_TITLE}</strong>입니다. 개발하면서 배운 것들과 생각을 정리해 두는
-      개인 블로그입니다.
-    </p>
-
-    <h2>기술 스택</h2>
-    <ul>
-      <li><strong>Framework:</strong> Astro</li>
-      <li><strong>Styling:</strong> Tailwind CSS + daisyUI</li>
-      <li><strong>Hosting:</strong> GitHub Pages</li>
-    </ul>
-
-    <h2>연락처</h2>
-    <ul>
-      <li>
-        <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
-      </li>
-    </ul>
-  </article>
-</BaseLayout>
+<MainGridLayout title={i18n(I18nKey.about)} description={i18n(I18nKey.about)}>
+    <div class="flex w-full rounded-[var(--radius-large)] overflow-hidden relative min-h-32">
+        <div class="card-base z-10 px-9 py-6 relative w-full ">
+            <Markdown class="mt-2">
+                <Content />
+            </Markdown>
+        </div>
+    </div>
+</MainGridLayout>
