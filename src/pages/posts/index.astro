@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getPublishedPosts } from '../../utils/posts';
+
+const posts = await getPublishedPosts();
+---
+
+<BaseLayout title="Posts" description="작성한 모든 글 목록">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Posts</h1>
+    <p class="text-base-content/70">총 {posts.length}개의 글</p>
+  </header>
+
+  {
+    posts.length === 0 ? (
+      <div class="alert">
+        <span>아직 작성된 글이 없습니다.</span>
+      </div>
+    ) : (
+      <div class="flex flex-col gap-4">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

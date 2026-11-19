@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getPublishedPosts } from '../../utils/posts';
+
+const posts = await getPublishedPosts();
+const tagCounts = new Map<string, number>();
+
+for (const post of posts) {
+  for (const tag of post.data.tags) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const sortedTags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<BaseLayout title="Tags" description="태그별 글 모아보기">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold mb-2">Tags</h1>
+    <p class="text-base-content/70">총 {sortedTags.length}개의 태그</p>
+  </header>
+
+  {
+    sortedTags.length === 0 ? (
+      <div class="alert">
+        <span>등록된 태그가 없습니다.</span>
+      </div>
+    ) : (
+      <div class="flex flex-wrap gap-3">
+        {sortedTags.map(([tag, count]) => (
+          <a
+            href={`/tags/${encodeURIComponent(tag)}`}
+            class="btn btn-outline btn-sm gap-2"
+          >
+            <span>#{tag}</span>
+            <span class="badge badge-sm badge-primary">{count}</span>
+          </a>
+        ))}
+      </div>
+    )
+  }
+</BaseLayout>

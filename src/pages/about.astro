@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { GITHUB_URL, SITE_TITLE } from '../consts';
+---
+
+<BaseLayout title="About" description={`${SITE_TITLE} 소개`}>
+  <article class="prose max-w-none">
+    <h1>About</h1>
+    <p>
+      안녕하세요, <strong>{SITE_TITLE}</strong>입니다. 개발하면서 배운 것들과 생각을 정리해 두는
+      개인 블로그입니다.
+    </p>
+
+    <h2>기술 스택</h2>
+    <ul>
+      <li><strong>Framework:</strong> Astro</li>
+      <li><strong>Styling:</strong> Tailwind CSS + daisyUI</li>
+      <li><strong>Hosting:</strong> GitHub Pages</li>
+    </ul>
+
+    <h2>연락처</h2>
+    <ul>
+      <li>
+        <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">GitHub</a>
+      </li>
+    </ul>
+  </article>
+</BaseLayout>

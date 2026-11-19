@@ -1,0 +1,59 @@
+---
+import { render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDate, getPublishedPosts, type Post } from '../../utils/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPublishedPosts();
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { title, description, pubDate, updatedDate, tags } = post.data;
+---
+
+<BaseLayout title={title} description={description}>
+  <article>
+    <header class="mb-8 pb-6 border-b border-base-300">
+      <div class="flex flex-wrap items-center gap-2 text-sm text-base-content/60 mb-3">
+        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+        {
+          updatedDate && (
+            <span>· 수정됨: {formatDate(updatedDate)}</span>
+          )
+        }
+      </div>
+      <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight mb-4">{title}</h1>
+      {
+        tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <a
+                href={`/tags/${encodeURIComponent(tag)}`}
+                class="badge badge-outline hover:badge-primary"
+              >
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <div class="prose max-w-none prose-headings:scroll-mt-20">
+      <Content />
+    </div>
+
+    <footer class="mt-12 pt-6 border-t border-base-300">
+      <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
+    </footer>
+  </article>
+</BaseLayout>

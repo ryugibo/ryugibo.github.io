@@ -1,0 +1,35 @@
+---
+import { formatDate, type Post } from '../utils/posts';
+
+interface Props {
+  post: Post;
+}
+
+const { post } = Astro.props;
+const { title, description, pubDate, tags } = post.data;
+---
+
+<article class="card bg-base-200/60 border border-base-300 hover:border-primary/50 transition-colors">
+  <div class="card-body gap-2">
+    <div class="flex flex-wrap items-center justify-between gap-2 text-xs text-base-content/60">
+      <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+      {
+        tags.length > 0 && (
+          <div class="flex flex-wrap gap-1.5">
+            {tags.map((tag) => (
+              <a href={`/tags/${encodeURIComponent(tag)}`} class="badge badge-sm badge-ghost hover:badge-primary">
+                #{tag}
+              </a>
+            ))}
+          </div>
+        )
+      }
+    </div>
+    <h2 class="card-title text-xl">
+      <a href={`/posts/${post.id}`} class="link link-hover">
+        {title}
+      </a>
+    </h2>
+    <p class="text-sm text-base-content/80 leading-relaxed">{description}</p>
+  </div>
+</article>

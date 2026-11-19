@@ -1,16 +1,48 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { GITHUB_URL, SITE_DESCRIPTION, SITE_TITLE } from '../consts';
+import { getPublishedPosts } from '../utils/posts';
+
+const recentPosts = (await getPublishedPosts()).slice(0, 5);
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout>
+  <section class="py-6 mb-10 border-b border-base-300">
+    <h1 class="text-4xl font-extrabold tracking-tight mb-3">{SITE_TITLE}</h1>
+    <p class="text-base-content/80 text-lg mb-5">{SITE_DESCRIPTION}</p>
+    <div class="flex flex-wrap gap-2">
+      <a href="/posts" class="btn btn-primary btn-sm">글 보러가기</a>
+      <a href="/about" class="btn btn-outline btn-sm">소개</a>
+      <a
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-ghost btn-sm"
+      >
+        GitHub ↗
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-2xl font-bold">최근 글</h2>
+      <a href="/posts" class="link link-primary text-sm">전체 보기 →</a>
+    </div>
+
+    {
+      recentPosts.length === 0 ? (
+        <div class="alert">
+          <span>아직 작성된 글이 없습니다.</span>
+        </div>
+      ) : (
+        <div class="flex flex-col gap-4">
+          {recentPosts.map((post) => (
+            <PostCard post={post} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</BaseLayout>
