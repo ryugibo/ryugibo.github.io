@@ -23,78 +23,119 @@ const readingTime = getReadingTime(post.body);
 const hasToc = headings.some((h) => h.depth === 2 || h.depth === 3);
 ---
 
-<BaseLayout title={title} description={description} fullWidth={true}>
+<BaseLayout title={title} description={description} fullWidth={true} flushTop={Boolean(heroImage)}>
   <article>
-    <header class="max-w-[740px] mx-auto mb-10 pb-8 border-b border-base-300">
-      <div class="flex flex-wrap items-center gap-2 mb-4">
-        {
-          category && (
-            <span class="badge badge-primary badge-soft font-semibold uppercase tracking-wider text-xs">
-              {category}
-            </span>
-          )
-        }
-        {
-          tags.map((tag) => (
-            <a
-              href={`/tags/${encodeURIComponent(tag)}`}
-              class="badge badge-outline badge-sm hover:badge-primary transition-colors"
-            >
-              #{tag}
-            </a>
-          ))
-        }
-      </div>
-
-      <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-        {title}
-      </h1>
-
-      <p class="text-lg sm:text-xl text-base-content/75 leading-relaxed mb-6">
-        {description}
-      </p>
-
-      <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/60">
-        <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
-        {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
-        <span>·</span>
-        <span>약 {readingTime}분 읽기</span>
-      </div>
-    </header>
-
     {
-      heroImage && (
-        <figure class="max-w-4xl mx-auto mb-12">
+      heroImage ? (
+        <header class="relative w-full overflow-hidden border-b border-base-300 mb-12 sm:mb-16 min-h-[360px] sm:min-h-[440px] flex items-end">
           <img
             src={heroImage}
             alt={heroAlt ?? title}
-            class="w-full max-h-[480px] object-cover rounded-xl border border-base-300 shadow-lg"
+            class="absolute inset-0 w-full h-full object-cover select-none"
             loading="eager"
           />
-          {heroAlt && (
-            <figcaption class="text-center text-sm text-base-content/60 mt-3">{heroAlt}</figcaption>
-          )}
-        </figure>
+          <div
+            class="absolute inset-0 bg-gradient-to-t from-[#101014] via-[#101014]/70 to-[#101014]/35"
+            aria-hidden="true"
+          />
+          <div class="relative z-10 w-full px-4 sm:px-6 pt-24 pb-10 sm:pt-32 sm:pb-14">
+            <div class="max-w-[740px] mx-auto text-[#f3f5fa]">
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                {category && (
+                  <span class="badge bg-[#26bbff]/20 text-[#26bbff] border-[#26bbff]/40 font-semibold uppercase tracking-wider text-xs">
+                    {category}
+                  </span>
+                )}
+                {tags.map((tag) => (
+                  <a
+                    href={`/tags/${encodeURIComponent(tag)}`}
+                    class="badge badge-sm bg-white/10 text-white/85 border-white/20 hover:bg-[#26bbff] hover:text-[#06141d] hover:border-[#26bbff] transition-colors"
+                  >
+                    #{tag}
+                  </a>
+                ))}
+              </div>
+
+              <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 drop-shadow-sm">
+                {title}
+              </h1>
+
+              <p class="text-base sm:text-xl text-white/80 leading-relaxed mb-6">
+                {description}
+              </p>
+
+              <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-white/65">
+                <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+                {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
+                <span>·</span>
+                <span>약 {readingTime}분 읽기</span>
+              </div>
+            </div>
+          </div>
+        </header>
+      ) : (
+        <div class="px-4 sm:px-6">
+          <header class="max-w-[740px] mx-auto mb-10 pb-8 border-b border-base-300">
+            <div class="flex flex-wrap items-center gap-2 mb-4">
+              {category && (
+                <span class="badge badge-primary badge-soft font-semibold uppercase tracking-wider text-xs">
+                  {category}
+                </span>
+              )}
+              {tags.map((tag) => (
+                <a
+                  href={`/tags/${encodeURIComponent(tag)}`}
+                  class="badge badge-outline badge-sm hover:badge-primary transition-colors"
+                >
+                  #{tag}
+                </a>
+              ))}
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">
+              {title}
+            </h1>
+
+            <p class="text-lg sm:text-xl text-base-content/75 leading-relaxed mb-6">
+              {description}
+            </p>
+
+            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-base-content/60">
+              <time datetime={pubDate.toISOString()}>{formatDate(pubDate)}</time>
+              {updatedDate && <span>· 수정됨 {formatDate(updatedDate)}</span>}
+              <span>·</span>
+              <span>약 {readingTime}분 읽기</span>
+            </div>
+          </header>
+        </div>
       )
     }
 
-    <div class="xl:grid xl:grid-cols-[1fr_minmax(0,740px)_1fr] xl:gap-10 max-w-[1440px] mx-auto">
-      <div class="hidden xl:block" aria-hidden="true"></div>
+    <div class="px-4 sm:px-6">
+      <div class="xl:grid xl:grid-cols-[1fr_minmax(0,740px)_1fr] xl:gap-10 max-w-[1440px] mx-auto">
+        <div class="hidden xl:block" aria-hidden="true"></div>
 
-      <div class="max-w-[740px] w-full mx-auto">
-        {hasToc && <TableOfContents headings={headings} variant="inline" />}
+        <div class="max-w-[740px] w-full mx-auto">
+          {hasToc && <TableOfContents headings={headings} variant="inline" />}
 
-        <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
-          <Content />
+          <div class="prose ue-prose max-w-none prose-headings:scroll-mt-24">
+            <Content />
+          </div>
+
+          <footer class="mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
+            <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
+            <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
+          </footer>
         </div>
 
-        <footer class="mt-16 pt-6 border-t border-base-300 flex items-center justify-between">
-          <a href="/posts" class="btn btn-ghost btn-sm">← 글 목록으로</a>
-          <a href="#top" class="btn btn-ghost btn-sm text-base-content/65">맨 위로 ↑</a>
-        </footer>
+        {
+          hasToc ? (
+            <TableOfContents headings={headings} variant="rail" />
+          ) : (
+            <div class="hidden xl:block" aria-hidden="true" />
+          )
+        }
       </div>
-
-      {hasToc ? <TableOfContents headings={headings} variant="rail" /> : <div class="hidden xl:block" aria-hidden="true" />}
     </div>
   </article>
 </BaseLayout>

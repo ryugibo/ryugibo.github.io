@@ -1,41 +1,51 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 520" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 720" fill="none">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="520" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#101014" />
-      <stop offset="55%" stop-color="#141824" />
-      <stop offset="100%" stop-color="#0d1320" />
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="720" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0c0e14" />
+      <stop offset="48%" stop-color="#131928" />
+      <stop offset="100%" stop-color="#0b111d" />
     </linearGradient>
-    <radialGradient id="glow1" cx="0.78" cy="0.25" r="0.55">
-      <stop offset="0%" stop-color="#26bbff" stop-opacity="0.28" />
+    <radialGradient id="glowBlue" cx="0.72" cy="0.32" r="0.52">
+      <stop offset="0%" stop-color="#26bbff" stop-opacity="0.42" />
+      <stop offset="45%" stop-color="#26bbff" stop-opacity="0.12" />
       <stop offset="100%" stop-color="#26bbff" stop-opacity="0" />
     </radialGradient>
-    <radialGradient id="glow2" cx="0.22" cy="0.85" r="0.45">
-      <stop offset="0%" stop-color="#ff7a33" stop-opacity="0.16" />
+    <radialGradient id="glowOrange" cx="0.22" cy="0.72" r="0.45">
+      <stop offset="0%" stop-color="#ff7a33" stop-opacity="0.26" />
+      <stop offset="55%" stop-color="#ff7a33" stop-opacity="0.06" />
       <stop offset="100%" stop-color="#ff7a33" stop-opacity="0" />
     </radialGradient>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.05" stroke-width="1" />
+    <radialGradient id="glowIndigo" cx="0.52" cy="0.18" r="0.4">
+      <stop offset="0%" stop-color="#7c8cff" stop-opacity="0.22" />
+      <stop offset="100%" stop-color="#7c8cff" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse">
+      <path d="M 48 0 L 0 0 0 48" fill="none" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1" />
     </pattern>
   </defs>
-  <rect width="1200" height="520" fill="url(#bg)" />
-  <rect width="1200" height="520" fill="url(#grid)" />
-  <rect width="1200" height="520" fill="url(#glow1)" />
-  <rect width="1200" height="520" fill="url(#glow2)" />
 
-  <g opacity="0.22" stroke="#26bbff" stroke-width="1.5">
-    <circle cx="930" cy="240" r="150" />
-    <circle cx="930" cy="240" r="105" stroke-dasharray="6 6" />
-    <circle cx="930" cy="240" r="56" />
-    <line x1="760" y1="240" x2="1100" y2="240" />
-    <line x1="930" y1="70" x2="930" y2="410" />
+  <rect width="1600" height="720" fill="url(#bg)" />
+  <rect width="1600" height="720" fill="url(#grid)" />
+  <rect width="1600" height="720" fill="url(#glowBlue)" />
+  <rect width="1600" height="720" fill="url(#glowOrange)" />
+  <rect width="1600" height="720" fill="url(#glowIndigo)" />
+
+  <!-- Subtle orbital / technical rings -->
+  <g stroke="#26bbff" stroke-opacity="0.26" stroke-width="1.5">
+    <circle cx="1140" cy="250" r="240" />
+    <circle cx="1140" cy="250" r="170" stroke-dasharray="8 8" stroke-opacity="0.35" />
+    <circle cx="1140" cy="250" r="96" stroke-opacity="0.45" />
+    <line x1="840" y1="250" x2="1440" y2="250" stroke-opacity="0.16" />
+    <line x1="1140" y1="-20" x2="1140" y2="520" stroke-opacity="0.16" />
   </g>
 
-  <rect x="84" y="132" width="136" height="30" rx="6" fill="#26bbff" fill-opacity="0.14" stroke="#26bbff" stroke-opacity="0.45" />
-  <text x="152" y="152" text-anchor="middle" fill="#26bbff" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700" letter-spacing="1.5">ENGINEERING</text>
+  <!-- Sweeping horizon arcs -->
+  <path d="M-80 560 Q 520 340 1680 460" stroke="#26bbff" stroke-opacity="0.22" stroke-width="2" />
+  <path d="M-80 610 Q 640 410 1680 520" stroke="#ff7a33" stroke-opacity="0.18" stroke-width="1.5" />
 
-  <text x="84" y="232" fill="#f3f5fa" font-family="system-ui, -apple-system, sans-serif" font-size="54" font-weight="800" letter-spacing="-1.2">Astro × daisyUI</text>
-  <text x="84" y="294" fill="#9ba3b8" font-family="system-ui, -apple-system, sans-serif" font-size="26" font-weight="500">Editorial Tech Blog on GitHub Pages</text>
-
-  <line x1="84" y1="340" x2="480" y2="340" stroke="#262732" stroke-width="2" />
-  <text x="84" y="380" fill="#6f778e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="16">ryugibo.github.io  ·  Static Architecture  ·  MDX &amp; Media</text>
+  <!-- Highlight nodes -->
+  <circle cx="1140" cy="250" r="6" fill="#26bbff" />
+  <circle cx="970" cy="250" r="4" fill="#26bbff" fill-opacity="0.8" />
+  <circle cx="1260" cy="130" r="3.5" fill="#ff7a33" fill-opacity="0.85" />
+  <circle cx="380" cy="430" r="4" fill="#7c8cff" fill-opacity="0.75" />
 </svg>

@@ -6,9 +6,15 @@ interface Props {
   title?: string;
   description?: string;
   fullWidth?: boolean;
+  flushTop?: boolean;
 }
 
-const { title, description = SITE_DESCRIPTION, fullWidth = false } = Astro.props;
+const {
+  title,
+  description = SITE_DESCRIPTION,
+  fullWidth = false,
+  flushTop = false,
+} = Astro.props;
 const pageTitle = title ? `${title} | ${SITE_TITLE}` : SITE_TITLE;
 const pathname = Astro.url.pathname;
 
@@ -109,8 +115,9 @@ const navLinks = [
 
     <main
       class:list={[
-        'flex-1 px-4 sm:px-6 py-10 sm:py-14',
-        fullWidth ? 'w-full' : 'container mx-auto max-w-4xl',
+        'flex-1',
+        flushTop ? 'pb-10 sm:pb-14' : 'py-10 sm:py-14',
+        fullWidth ? 'w-full' : 'container mx-auto max-w-4xl px-4 sm:px-6',
       ]}
     >
       <slot />
