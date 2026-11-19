@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 320" fill="none">
+  <rect width="960" height="320" rx="12" fill="#14161d" />
+  <text x="48" y="48" fill="#9ba3b8" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" font-weight="700" letter-spacing="1.5">STATIC PUBLISHING PIPELINE</text>
+
+  <!-- Step 1 -->
+  <rect x="48" y="96" width="185" height="128" rx="12" fill="#18181f" stroke="#2a2d3a" stroke-width="1.5" />
+  <text x="72" y="134" fill="#26bbff" font-family="ui-monospace, monospace" font-size="12" font-weight="700">01. CONTENT</text>
+  <text x="72" y="166" fill="#e6e8ef" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Markdown / MDX</text>
+  <text x="72" y="194" fill="#8b93a8" font-family="system-ui, sans-serif" font-size="13">src/content/posts</text>
+
+  <!-- Arrow 1 -->
+  <path d="M233 160 L273 160" stroke="#26bbff" stroke-width="2" />
+  <polygon points="273,154 285,160 273,166" fill="#26bbff" />
+
+  <!-- Step 2 -->
+  <rect x="285" y="96" width="185" height="128" rx="12" fill="#18181f" stroke="#26bbff" stroke-opacity="0.55" stroke-width="1.5" />
+  <text x="309" y="134" fill="#26bbff" font-family="ui-monospace, monospace" font-size="12" font-weight="700">02. BUILD</text>
+  <text x="309" y="166" fill="#e6e8ef" font-family="system-ui, sans-serif" font-size="18" font-weight="700">Astro + daisyUI</text>
+  <text x="309" y="194" fill="#8b93a8" font-family="system-ui, sans-serif" font-size="13">Shiki · RSS · Sitemap</text>
+
+  <!-- Arrow 2 -->
+  <path d="M470 160 L510 160" stroke="#26bbff" stroke-width="2" />
+  <polygon points="510,154 522,160 510,166" fill="#26bbff" />
+
+  <!-- Step 3 -->
+  <rect x="522" y="96" width="185" height="128" rx="12" fill="#18181f" stroke="#2a2d3a" stroke-width="1.5" />
+  <text x="546" y="134" fill="#ff7a33" font-family="ui-monospace, monospace" font-size="12" font-weight="700">03. CI / CD</text>
+  <text x="546" y="166" fill="#e6e8ef" font-family="system-ui, sans-serif" font-size="18" font-weight="700">GitHub Actions</text>
+  <text x="546" y="194" fill="#8b93a8" font-family="system-ui, sans-serif" font-size="13">pnpm build → dist/</text>
+
+  <!-- Arrow 3 -->
+  <path d="M707 160 L747 160" stroke="#26bbff" stroke-width="2" />
+  <polygon points="747,154 759,160 747,166" fill="#26bbff" />
+
+  <!-- Step 4 -->
+  <rect x="759" y="96" width="153" height="128" rx="12" fill="#18181f" stroke="#4ade80" stroke-opacity="0.55" stroke-width="1.5" />
+  <text x="781" y="134" fill="#4ade80" font-family="ui-monospace, monospace" font-size="12" font-weight="700">04. LIVE</text>
+  <text x="781" y="166" fill="#e6e8ef" font-family="system-ui, sans-serif" font-size="17" font-weight="700">GitHub Pages</text>
+  <text x="781" y="194" fill="#8b93a8" font-family="system-ui, sans-serif" font-size="12">ryugibo.github.io</text>
+
+  <text x="48" y="278" fill="#687086" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">Zero-JS static output by default · Instant global CDN delivery</text>
+</svg>
